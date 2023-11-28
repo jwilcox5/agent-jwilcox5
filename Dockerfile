@@ -1,4 +1,4 @@
-FROM golang:latest AS build
+FROM public.ecr.aws/docker/library/golang:latest AS build
 
 WORKDIR /build
 COPY . .
@@ -7,7 +7,7 @@ RUN go mod download
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o main .
 
-FROM alpine:latest
+FROM public.ecr.aws/docker/library/alpine:latest
 
 RUN apk update && \
     apk upgrade && \
@@ -19,5 +19,7 @@ WORKDIR /app
 COPY --from=build /build/main ./
 
 RUN pwd && find .
+
+EXPOSE 8080
 
 CMD ["./main"]
